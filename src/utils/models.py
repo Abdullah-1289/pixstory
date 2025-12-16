@@ -1,33 +1,40 @@
-"""
-Model definitions for PixStory
-"""
+# src/utils/models.py
 import torch
 import torch.nn as nn
 import torchvision.models as models
 
 class CNNEncoder(nn.Module):
-    def __init__(self, embed_size, fine_tune=False):
+    def __init__(self, embed_size=512, fine_tune=False):
         super().__init__()
+        
+        # Load pretrained ResNet-18
         resnet = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+        
+        # Remove the final classification layer
         self.features = nn.Sequential(*list(resnet.children())[:-1])
         
+        # Freeze or fine-tune
         if fine_tune:
+            # Fine-tune last few layers
             for param in list(self.features.parameters())[-30:]:
                 param.requires_grad = True
         else:
+            # Freeze all
             for param in self.features.parameters():
                 param.requires_grad = False
         
+        # Project to decoder size
         self.projection = nn.Sequential(
-            nn.Linear(resnet.fc.in_features, embed_size),
+            nn.Linear(512, embed_size),  # ResNet-18 output is 512
             nn.BatchNorm1d(embed_size),
             nn.ReLU(),
             nn.Dropout(0.3)
         )
     
     def forward(self, x):
+        # Extract features
         x = self.features(x)
-        x = x.view(x.size(0), -1)
+        x = x.view(x.size(0), -1)  # Flatten
         return self.projection(x)
 
 class DecoderGRU(nn.Module):
@@ -39,33 +46,55 @@ class DecoderGRU(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.word2idx = word2idx
         self.vocab_size = vocab_size
+        
+        # Add projection layer for hidden state
         self.feature_projection = nn.Linear(embed_size, hidden_size) if embed_size != hidden_size else nn.Identity()
-    
+
     def forward(self, features, captions):
-        embeddings = self.dropout(self.embed(captions))
-        hidden_features = self.feature_projection(features)
-        features_expanded = features.unsqueeze(1).repeat(1, embeddings.size(1), 1)
-        gru_input = torch.cat([embeddings, features_expanded], dim=2)
-        hidden = hidden_features.unsqueeze(0)
-        output, _ = self.gru(gru_input, hidden)
+        # features: [batch, 512] from CNN
+        # captions: [batch, seq_len]
+        
+        embeddings = self.dropout(self.embed(captions))  # [batch, seq_len, 512]
+        
+        # Project features for hidden state
+        hidden_features = self.feature_projection(features)  # [batch, hidden_size]
+        
+        # Expand features to match sequence length (use ORIGINAL 512 size for concatenation)
+        features_expanded = features.unsqueeze(1)  # [batch, 1, 512]
+        features_expanded = features_expanded.repeat(1, embeddings.size(1), 1)  # [batch, seq_len, 512]
+        
+        # Concatenate embeddings (512) + features (512) = 1024
+        gru_input = torch.cat([embeddings, features_expanded], dim=2)  # [batch, seq_len, 1024]
+        
+        # Hidden state: [1, batch, hidden_size]
+        hidden = hidden_features.unsqueeze(0)  # [1, batch, hidden_size]
+        
+        output, _ = self.gru(gru_input, hidden)  # [batch, seq_len, hidden_size]
         output = self.dropout(output)
-        return self.linear(output)
-    
+        return self.linear(output)  # [batch, seq_len, vocab_size]
+
     def predict(self, features, max_len=25, device='cuda'):
         batch_size = features.size(0)
-        hidden_features = self.feature_projection(features)
-        hidden = hidden_features.unsqueeze(0)
+        
+        # Project features for hidden state
+        hidden_features = self.feature_projection(features)  # [batch, hidden_size]
+        hidden = hidden_features.unsqueeze(0)  # [1, batch, hidden_size]
+        
         inputs = torch.tensor([[self.word2idx['<start>']]] * batch_size, device=device)
         seq = []
         
         for _ in range(max_len):
-            embeddings = self.embed(inputs)
-            features_expanded = features.unsqueeze(1)
-            gru_input = torch.cat([embeddings, features_expanded], dim=2)
+            embeddings = self.embed(inputs)  # [batch, 1, 512]
+            
+            # Use ORIGINAL features (512) for concatenation
+            features_expanded = features.unsqueeze(1)  # [batch, 1, 512]
+            gru_input = torch.cat([embeddings, features_expanded], dim=2)  # [batch, 1, 1024]
+            
             output, hidden = self.gru(gru_input, hidden)
             predicted = self.linear(output.squeeze(1)).argmax(1)
             seq.append(predicted.unsqueeze(1))
             inputs = predicted.unsqueeze(1)
+            
             if (predicted == self.word2idx['<end>']).all():
                 break
         
@@ -80,22 +109,23 @@ class DecoderLSTM(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.word2idx = word2idx
         self.vocab_size = vocab_size
-        self.feature_projection = nn.Linear(embed_size, hidden_size) if embed_size != hidden_size else nn.Identity()
-    
+        
     def forward(self, features, captions):
         embeddings = self.dropout(self.embed(captions))
-        hidden_features = self.feature_projection(features)
         features_expanded = features.unsqueeze(1).repeat(1, embeddings.size(1), 1)
         lstm_input = torch.cat([embeddings, features_expanded], dim=2)
-        hidden = (hidden_features.unsqueeze(0), torch.zeros_like(hidden_features).unsqueeze(0))
+        
+        # Initialize hidden and cell states
+        hidden = (features.unsqueeze(0), torch.zeros_like(features).unsqueeze(0))
+        
         output, _ = self.lstm(lstm_input, hidden)
         output = self.dropout(output)
         return self.linear(output)
     
     def predict(self, features, max_len=25, device='cuda'):
         batch_size = features.size(0)
-        hidden_features = self.feature_projection(features)
-        hidden = (hidden_features.unsqueeze(0), torch.zeros_like(hidden_features).unsqueeze(0))
+        hidden = (features.unsqueeze(0), torch.zeros_like(features).unsqueeze(0))
+        
         inputs = torch.tensor([[self.word2idx['<start>']]] * batch_size, device=device)
         seq = []
         
@@ -103,10 +133,12 @@ class DecoderLSTM(nn.Module):
             embeddings = self.embed(inputs)
             features_expanded = features.unsqueeze(1)
             lstm_input = torch.cat([embeddings, features_expanded], dim=2)
+            
             output, hidden = self.lstm(lstm_input, hidden)
             predicted = self.linear(output.squeeze(1)).argmax(1)
             seq.append(predicted.unsqueeze(1))
             inputs = predicted.unsqueeze(1)
+            
             if (predicted == self.word2idx['<end>']).all():
                 break
         
