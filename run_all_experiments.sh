@@ -28,25 +28,19 @@ echo "=========================="
 echo ""
 echo "1. RNN Type Comparison (LSTM vs GRU)"
 echo "------------------------------------"
-python3 experiments/01_rnn_type_comparison.py
+python3 experiments/01_rnn_comparison.py
 
 # Run experiment 2
 echo ""
 echo "2. Hidden Size Comparison (256 vs 512)"
 echo "--------------------------------------"
-python3 experiments/02_hidden_size_comparison.py
+python3 experiments/02_hidden_size.py
 
 # Run experiment 3
 echo ""
 echo "3. CNN Tuning Comparison (Frozen vs Fine-tuned)"
 echo "-----------------------------------------------"
-python3 experiments/03_cnn_tuning_comparison.py
-
-# Generate final report
-echo ""
-echo "Generating Final Report"
-echo "-----------------------"
-python3 run_all_experiments.py
+python3 experiments/03_cnn_tuning.py
 
 echo ""
 echo "All experiments completed!"
