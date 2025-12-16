@@ -18,23 +18,21 @@ pixstory-local/
 └── results/ # Generated results
 ```
 
-text
-
 
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
-
+```
 2. Run All Experiments
-bash
-
+```bash
 chmod +x run_all_experiments.sh
 ./run_all_experiments.sh
+```
 
 3. Run Individual Experiments
-bash
+```bash
 
 # Experiment 1: RNN Type Comparison
 python3 experiments/01_rnn_comparison.py
@@ -44,7 +42,7 @@ python3 experiments/02_hidden_size.py
 
 # Experiment 3: CNN Tuning Comparison
 python3 experiments/03_cnn_tuning.py
-
+```
 🔬 Experiments
 Experiment 1: RNN Type Comparison
 
@@ -84,11 +82,11 @@ Each experiment generates:
 💻 View Existing Results
 
 To see the evaluation results that have already been computed:
-bash
+```bash
 
 cat results/model_evaluation_results.csv
 cat results/final_results_summary.csv
-
+```
 ⏱️ Time Estimates
 
     First run: Downloads Flickr8k dataset (~1GB)
