@@ -1,7 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual Environment
 .env
 venv/
+env/
+
+# Model files - DO NOT PUSH
 *.pth
-*.log
-.DS_Store
-data/
+*.pt
+*.h5
+*.ckpt
+*.safetensors
 models/
+models_backup_*.tar.gz
+backup*/
+
+# Data files
+data/
+Images/
+captions.txt
+*.jpg
+*.png
+*.jpeg
+
+# Results
+results/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Large files
+*.tar.gz
+*.zip
+*.7z
