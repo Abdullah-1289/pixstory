@@ -3,8 +3,7 @@
 A CNN+RNN image captioning system for the PixStory case study (COSC 442).
 
 ## 📁 Project Structure
-
-
+```
 pixstory-local/
 ├── run_all_experiments.sh # Run all 3 experiments
 ├── original_implementation.py # Complete working implementation
@@ -17,13 +16,15 @@ pixstory-local/
 ├── src/utils/ # Core modules (if modularized)
 ├── models/ # Pre-trained models (4 files)
 └── results/ # Generated results
+```
 
+text
 
 
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
-bash
+```bash
 pip install -r requirements.txt
 
 2. Run All Experiments
