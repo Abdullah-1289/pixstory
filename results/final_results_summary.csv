@@ -1,0 +1,5 @@
+Model,BLEU-1,BLEU-4,Training Time
+GRU-512 (Frozen CNN),0.2904,0.0503,25 min
+LSTM-512 (Frozen CNN),0.228,0.0375,28 min
+GRU-256 (Frozen CNN),TBD,TBD,25 min
+GRU-512 (Fine-tuned CNN),0.2349,0.0415,55 min
