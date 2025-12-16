@@ -46,3 +46,5 @@ logs/
 *.tar.gz
 *.zip
 *.7z
+models_backup_*.tar.gz
+backup*/
