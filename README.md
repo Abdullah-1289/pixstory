@@ -59,6 +59,7 @@ Experiment 3: CNN Tuning Comparison
 File: experiments/03_cnn_tuning.py
 Goal: Compare frozen vs fine-tuned CNN encoder
 Output: Quality improvement vs overfitting analysis
+
 📊 Results Summary (Pre-trained Models)
 
 The models/ folder contains 4 pre-trained models with the following performance:
@@ -69,6 +70,7 @@ exp2_gru_256.pth	GRU decoder, 256 hidden, frozen CNN	0.2227	0.0354
 exp3_finetuned.pth	GRU decoder, 512 hidden, fine-tuned CNN	0.2349	0.0415
 
 Note: Experiments load these models if they exist, otherwise train new ones.
+
 📈 Expected Output
 
 Each experiment generates:
