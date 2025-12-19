@@ -18,7 +18,7 @@ os.makedirs(RESULT_DIR, exist_ok=True)
 DATASET_SLUG = "adityajn105/flickr8k"
 IMAGE_SIZE = 224
 MAX_CAPTION_LEN = 25
-MIN_WORD_FREQ = 5
+MIN_WORD_FREQ = 2
 
 # Training
 BATCH_SIZE = 32

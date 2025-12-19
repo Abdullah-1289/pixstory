@@ -53,7 +53,7 @@ class FlickrDataset(Dataset):
         
         return image, torch.tensor(caption_ids, dtype=torch.long)
 
-def build_vocabulary(train_df, min_freq=5):
+def build_vocabulary(train_df, min_freq=2):
     """Build vocabulary from training captions"""
     all_tokens = []
     for caption in train_df['caption']:

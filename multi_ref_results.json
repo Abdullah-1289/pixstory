@@ -1,0 +1,59 @@
+{
+  "bleu1_mean": 0.5699656032717147,
+  "bleu4_mean": 0.14116801881613322,
+  "bleu1_std": 0.180172902036494,
+  "bleu4_std": 0.15363489897376126,
+  "n_images": 810,
+  "examples": [
+    {
+      "image": "1022454428_b6b660a67b.jpg",
+      "predicted": "a man is sitting on a rock in front of a crowd .",
+      "references": [
+        "a couple and an infant , being held by the male , sitting next to a pond with a near by stroller .",
+        "a couple sit on the grass with a baby and stroller ."
+      ],
+      "bleu1": 0.6153846153846154,
+      "bleu4": 0.05525870142124495
+    },
+    {
+      "image": "102351840_323e3de834.jpg",
+      "predicted": "a man is skiing down a",
+      "references": [
+        "a man drilling a hole in the ice .",
+        "a man is drilling through the frozen ice of a pond ."
+      ],
+      "bleu1": 0.6666666666666666,
+      "bleu4": 0.21711852081087685
+    },
+    {
+      "image": "1028205764_7e8df9a2ea.jpg",
+      "predicted": "a man in a yellow kayak is paddling a yellow kayak .",
+      "references": [
+        "a man and a baby are in a yellow kayak on water .",
+        "a man and a little boy in blue life jackets are rowing a yellow canoe ."
+      ],
+      "bleu1": 0.6666666666666666,
+      "bleu4": 0.37700638045494705
+    },
+    {
+      "image": "103195344_5d2dc613a3.jpg",
+      "predicted": "a man is standing on a sidewalk with a city and a black and white dog .",
+      "references": [
+        "a man in black is sitting next to a modern art structure in front of a glass building .",
+        "a man sits and reads a newspaper by a sculpture outside of an office building ."
+      ],
+      "bleu1": 0.5294117647058824,
+      "bleu4": 0.03542938205971965
+    },
+    {
+      "image": "1042590306_95dea0916c.jpg",
+      "predicted": "a man and a woman are smiling and laughing .",
+      "references": [
+        "a man and woman pose for the camera while another man looks on .",
+        "a man is holding the hand of a woman up to his mouth in front of some buildings while another man looks on ."
+      ],
+      "bleu1": 0.6,
+      "bleu4": 0.13747081017605653
+    }
+  ]
+}

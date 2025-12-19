@@ -67,7 +67,7 @@ class DecoderGRU(nn.Module):
         # Hidden state: [1, batch, hidden_size]
         hidden = hidden_features.unsqueeze(0)  # [1, batch, hidden_size]
         
-        output, _ = self.gru(embeddings, hidden)  # [batch, seq_len, hidden_size]
+        output, _ = self.gru(gru_input, hidden)  # [batch, seq_len, hidden_size]
         output = self.dropout(output)
         return self.linear(output)  # [batch, seq_len, vocab_size]
 
@@ -86,7 +86,7 @@ class DecoderGRU(nn.Module):
             
             # Use ORIGINAL features (512) for concatenation
             
-            output, hidden = self.gru(embeddings, hidden)
+            output, hidden = self.gru(gru_input, hidden)
             predicted = self.linear(output.squeeze(1)).argmax(1)
             seq.append(predicted.unsqueeze(1))
             inputs = predicted.unsqueeze(1)
@@ -112,7 +112,7 @@ class DecoderLSTM(nn.Module):
         # Initialize hidden and cell states
         hidden = (features.unsqueeze(0), torch.zeros_like(features).unsqueeze(0))
         
-        output, _ = self.lstm(embeddings, hidden)
+        output, _ = self.lstm(lstm_input, hidden)
         output = self.dropout(output)
         return self.linear(output)
     
@@ -126,7 +126,7 @@ class DecoderLSTM(nn.Module):
         for _ in range(max_len):
             embeddings = self.embed(inputs)
             
-            output, hidden = self.lstm(embeddings, hidden)
+            output, hidden = self.lstm(lstm_input, hidden)
             predicted = self.linear(output.squeeze(1)).argmax(1)
             seq.append(predicted.unsqueeze(1))
             inputs = predicted.unsqueeze(1)

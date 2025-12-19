@@ -122,12 +122,20 @@ class DecoderGRU(nn.Module):
         # Project features for hidden state
         hidden_features = self.feature_projection(features)  # [batch, hidden_size]
         
+        # Expand features to match sequence length (use ORIGINAL 512 size for concatenation)
+        features_expanded = features.unsqueeze(1)  # [batch, 1, 512]
+        features_expanded = features_expanded.repeat(1, embeddings.size(1), 1)  # [batch, seq_len, 512]
+        
+        # Concatenate embeddings (512) + features (512) = 1024
+        gru_input = torch.cat([embeddings, features_expanded], dim=2)  # [batch, seq_len, 1024]
+        
         # Hidden state: [1, batch, hidden_size]
         hidden = hidden_features.unsqueeze(0)  # [1, batch, hidden_size]
         
-        output, _ = self.gru(embeddings, hidden)  # [batch, seq_len, hidden_size]
+        output, _ = self.gru(gru_input, hidden)  # [batch, seq_len, hidden_size]
         output = self.dropout(output)
         return self.linear(output)  # [batch, seq_len, vocab_size]
+
     def predict(self, features, max_len=25, device='cuda'):
         batch_size = features.size(0)
         
@@ -141,7 +149,11 @@ class DecoderGRU(nn.Module):
         for _ in range(max_len):
             embeddings = self.embed(inputs)  # [batch, 1, 512]
             
-            output, hidden = self.gru(embeddings, hidden)
+            # Use ORIGINAL features (512) for concatenation
+            features_expanded = features.unsqueeze(1)  # [batch, 1, 512]
+            gru_input = torch.cat([embeddings, features_expanded], dim=2)  # [batch, 1, 1024]
+            
+            output, hidden = self.gru(gru_input, hidden)
             predicted = self.linear(output.squeeze(1)).argmax(1)
             seq.append(predicted.unsqueeze(1))
             inputs = predicted.unsqueeze(1)
@@ -149,7 +161,7 @@ class DecoderGRU(nn.Module):
             if (predicted == self.word2idx['<end>']).all():
                 break
         
-        return torch.cat(seq, 1)  # Combining sequence tokens
+        return torch.cat(seq, 1)
 
 class DecoderLSTM(nn.Module):
     def __init__(self, embed_size, hidden_size, vocab_size, word2idx, dropout=0.3):
@@ -161,8 +173,10 @@ class DecoderLSTM(nn.Module):
         self.word2idx = word2idx
     def forward(self, features, captions):
         embeddings = self.dropout(self.embed(captions))
+        features_expanded = features.unsqueeze(1).repeat(1, embeddings.size(1), 1)
+        lstm_input = torch.cat([embeddings, features_expanded], dim=2)
         hidden = (features.unsqueeze(0), torch.zeros_like(features).unsqueeze(0))
-        output, _ = self.lstm(embeddings, hidden)
+        output, _ = self.lstm(lstm_input, hidden)
         output = self.dropout(output)
         return self.linear(output)
     def predict(self, features, max_len=25, device='cuda'):
@@ -172,7 +186,9 @@ class DecoderLSTM(nn.Module):
         seq = []
         for _ in range(max_len):
             embeddings = self.embed(inputs)
-            output, hidden = self.lstm(embeddings, hidden)
+            features_expanded = features.unsqueeze(1)
+            lstm_input = torch.cat([embeddings, features_expanded], dim=2)
+            output, hidden = self.lstm(lstm_input, hidden)
             predicted = self.linear(output.squeeze(1)).argmax(1)
             seq.append(predicted.unsqueeze(1))
             inputs = predicted.unsqueeze(1)
