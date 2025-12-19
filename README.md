@@ -45,7 +45,7 @@ pixstory/
 └── src/utils/               # Utility modules
 ```
 
-##📈 Key Findings
+## 📈 Key Findings
 
     GRU (0.547) ≈ LSTM (0.546) - Negligible difference
 
@@ -53,9 +53,9 @@ pixstory/
 
     Frozen CNN (0.569) > Fine-tuned (0.562) for BLEU-1
 
-##📄 Report Files
+## 📄 Report Files
 
-###All results are in results/ folder:
+### All results are in results/ folder:
 
     results/*.csv - BLEU scores for all experiments
 
