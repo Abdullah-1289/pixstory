@@ -28,21 +28,72 @@ python3 visualize_images.py    # 10 image+caption examples
 python3 visualize_result.py    # Performance charts & tables
 ```
 
-```📁 Project Structure
 
+## 📁 Project Structure
+
+```
 pixstory/
-├── run_all_experiments.sh     # Run all experiments
-├── run_rnn_only.py           # RNN: GRU vs LSTM
-├── run_hidden_size.py        # Hidden: 256 vs 512
-├── run_cnn_tuning.py         # CNN: Frozen vs Fine-tuned
-├── rerun_finetuning.py       # 8-epoch test
-├── visualize_images.py       # Generate image examples
-├── visualize_result.py       # Generate charts/tables
-├── original_implementation.py # Model architecture
-├── config.py                 # Configuration
-├── models/                   # Trained models (4 best)
-├── results/                  # All outputs
-└── src/utils/               # Utility modules
+├── config.py
+├── LICENSE
+├── models
+│   ├── exp1_gru_fixed.pth
+│   ├── exp1_lstm_fixed.pth
+│   ├── exp2_gru_256.pth
+│   ├── exp2_gru_512.pth
+│   ├── exp3_finetuned_h256_8epochs.pth
+│   ├── exp3_finetuned_h256.pth
+│   └── exp3_frozen_h256.pth
+├── __pycache__
+│   └── run_rnn_only.cpython-312.pyc
+├── README.md
+├── requirements.txt
+├── rerun_finetuning.py
+├── results
+│   ├── bleu_comparison_scatter.png
+│   ├── cnn_tuning_8epochs_comparison.csv
+│   ├── cnn_tuning_comparison.csv
+│   ├── cnn_tuning_comparison.png
+│   ├── detailed_results_table.png
+│   ├── experimental_results_summary.png
+│   ├── final_visualizations
+│   │   ├── example_01.png
+│   │   ├── example_02.png
+│   │   ├── example_03.png
+│   │   ├── example_04.png
+│   │   ├── example_05.png
+│   │   ├── example_06.png
+│   │   ├── example_07.png
+│   │   ├── example_08.png
+│   │   ├── example_09.png
+│   │   └── example_10.png
+│   ├── finetuned_8epochs_training.png
+│   ├── hidden_size_comparison.csv
+│   ├── hidden_size_comparison.png
+│   ├── pixstory_recommendation.png
+│   ├── qualitative_images
+│   │   ├── example_01.png
+│   │   ├── example_02.png
+│   │   ├── example_03.png
+│   │   ├── example_04.png
+│   │   ├── example_05.png
+│   │   ├── example_06.png
+│   │   ├── example_07.png
+│   │   ├── example_08.png
+│   │   ├── example_09.png
+│   │   └── example_10.png
+│   ├── qualitative_summary_final.png
+│   ├── rnn_comparison.csv
+│   ├── rnn_comparison.png
+│   └── training.log
+├── run_all_experiments.sh
+├── run_cnn_tuning.py
+├── run_hidden_size.py
+├── run_rnn_only.py
+├── visualize_images.py
+└── visualize_result.py
+
+6 directories, 53 files
+
 ```
 
 ## 📈 Key Findings
